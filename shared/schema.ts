@@ -1,238 +1,358 @@
-import { pgTable, varchar, text, boolean, timestamp, integer, serial, jsonb, uuid, date, uniqueIndex } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import { sql } from 'drizzle-orm';
+import {
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  timestamp,
+  varchar,
+  text,
+  boolean,
+} from "drizzle-orm/pg-core";
+import { relations } from 'drizzle-orm';
+import { createInsertSchema } from 'drizzle-zod';
+import { z } from 'zod';
+
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
 
 export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  email: varchar("email", { length: 255 }).unique(),
-  name: varchar("name", { length: 255 }),
-  profileImage: text("profile_image"),
-  isSubscribed: boolean("is_subscribed").default(false),
-  plan: varchar("plan", { length: 50 }),
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: varchar("email").unique(),
+  passwordHash: varchar("password_hash", { length: 255 }),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  points: integer("points").default(0).notNull(),
+  isAdmin: boolean("is_admin").default(false).notNull(),
+  isSubscribed: boolean("is_subscribed").default(false).notNull(),
+  subscriptionPlan: varchar("subscription_plan"),
   subscriptionStartDate: timestamp("subscription_start_date"),
   subscriptionEndDate: timestamp("subscription_end_date"),
   userRole: varchar("user_role", { length: 20 }),
+  teacherVerificationStatus: varchar("teacher_verification_status", { length: 20 }).default("unverified"),
+  verificationRequestedAt: timestamp("verification_requested_at"),
   bio: text("bio"),
   subjectsTaught: text("subjects_taught"),
   experienceYears: integer("experience_years"),
   reputationScore: integer("reputation_score").default(0),
   totalSales: integer("total_sales").default(0),
-  totalPoints: integer("total_points").default(0),
-  points: integer("points").default(0),
   badges: jsonb("badges"),
-  emailVerified: boolean("email_verified").default(false),
+  emailVerified: boolean("email_verified").default(false).notNull(),
   emailVerificationToken: varchar("email_verification_token", { length: 255 }),
   emailVerificationExpiry: timestamp("email_verification_expiry"),
-  agreedToTerms: boolean("agreed_to_terms").default(false),
+  agreedToTerms: boolean("agreed_to_terms").default(false).notNull(),
   agreedToTermsAt: timestamp("agreed_to_terms_at"),
-  marketingEmailsOptIn: boolean("marketing_emails_opt_in").default(false),
-  contentAlertsOptIn: boolean("content_alerts_opt_in").default(true),
-  teacherUpdatesOptIn: boolean("teacher_updates_opt_in").default(false),
-  teacherVerificationStatus: varchar("teacher_verification_status", { length: 50 }),
-  verificationRequestedAt: timestamp("verification_requested_at"),
-  passwordHash: varchar("password_hash", { length: 255 }),
-  firstName: varchar("first_name", { length: 100 }),
-  lastName: varchar("last_name", { length: 100 }),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  marketingEmailsOptIn: boolean("marketing_emails_opt_in").default(false).notNull(),
+  contentAlertsOptIn: boolean("content_alerts_opt_in").default(true).notNull(),
+  teacherUpdatesOptIn: boolean("teacher_updates_opt_in").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const videos = pgTable("videos", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
-  category: varchar("category", { length: 100 }),
-  duration: integer("duration"),
-  thumbnailUrl: text("thumbnail_url"),
-  videoUrl: text("video_url"),
-  viewCount: integer("view_count").default(0),
-  uploadedBy: uuid("uploaded_by").references(() => users.id),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  duration: varchar("duration").notNull(),
+  thumbnail: text("thumbnail").notNull(),
+  videoUrl: text("video_url").notNull(),
+  category: varchar("category").notNull(),
+  views: integer("views").default(0).notNull(),
+  isFeatured: boolean("is_featured").default(false).notNull(),
+  uploadedBy: varchar("uploaded_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const subscriptions = pgTable("subscriptions", {
-  id: serial("id").primaryKey(),
-  userId: uuid("user_id").references(() => users.id),
-  plan: varchar("plan", { length: 50 }),
-  price: integer("price"),
-  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
-  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
-  status: varchar("status", { length: 50 }),
-  renewalDate: timestamp("renewal_date"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  plan: varchar("plan").notNull(),
+  status: varchar("status").notNull(),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const sessions = pgTable("session", {
-  sid: varchar("sid").primaryKey(),
-  sess: jsonb("sess").notNull(),
-  expire: timestamp("expire", { precision: 6 }).notNull(),
+export const userActivity = pgTable("user_activity", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  date: varchar("date").notNull(),
+  readingTimeSeconds: integer("reading_time_seconds").default(0).notNull(),
+  watchingTimeSeconds: integer("watching_time_seconds").default(0).notNull(),
+  playingTimeSeconds: integer("playing_time_seconds").default(0).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const r2VideoMetadata = pgTable("r2_video_metadata", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  r2Key: varchar("r2_key").unique().notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const stories = pgTable("stories", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  slug: varchar("slug", { length: 255 }).unique().notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  excerpt: text("excerpt").notNull(),
+  content: text("content").notNull(),
+  category: varchar("category").notNull(),
+  thumbnail: text("thumbnail").notNull(),
+  readTime: varchar("read_time").notNull(),
+  isFeatured: boolean("is_featured").default(false).notNull(),
+  isPublished: boolean("is_published").default(false).notNull(),
+  publishedAt: timestamp("published_at"),
+  authorId: varchar("author_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const userRelations = relations(users, ({ many }) => ({
+  videos: many(videos),
+  subscriptions: many(subscriptions),
+}));
+
+export const videoRelations = relations(videos, ({ one }) => ({
+  uploadedBy: one(users, {
+    fields: [videos.uploadedBy],
+    references: [users.id],
+  }),
+}));
+
+export const subscriptionRelations = relations(subscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [subscriptions.userId],
+    references: [users.id],
+  }),
+}));
+
+export type UpsertUser = typeof users.$inferInsert;
+export type User = typeof users.$inferSelect;
+
+export type InsertVideo = typeof videos.$inferInsert;
+export type Video = typeof videos.$inferSelect;
+
+export type InsertSubscription = typeof subscriptions.$inferInsert;
+export type Subscription = typeof subscriptions.$inferSelect;
+
+export type InsertUserActivity = typeof userActivity.$inferInsert;
+export type UserActivity = typeof userActivity.$inferSelect;
+
+export type InsertR2VideoMetadata = typeof r2VideoMetadata.$inferInsert;
+export type R2VideoMetadata = typeof r2VideoMetadata.$inferSelect;
+
+export type InsertStory = typeof stories.$inferInsert;
+export type Story = typeof stories.$inferSelect;
+
+export const insertVideoSchema = createInsertSchema(videos).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const updateVideoSchema = createInsertSchema(videos).omit({
+  id: true,
+  createdAt: true,
+  uploadedBy: true,
+  views: true,
+}).partial();
+
+export const insertSubscriptionSchema = createInsertSchema(subscriptions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertR2VideoMetadataSchema = createInsertSchema(r2VideoMetadata).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertStorySchema = createInsertSchema(stories).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updateStorySchema = createInsertSchema(stories).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).partial();
+
+// Game templates linked to stories by title for scalability
 export const storyGames = pgTable("story_games", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  gameType: varchar("game_type", { length: 50 }).notNull(), // puzzle, match, quiz, whack, timeline
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   thumbnail: text("thumbnail"),
-  gameType: varchar("game_type", { length: 50 }).notNull(),
-  config: jsonb("config"),
-  linkedStoryTitle: text("linked_story_title"),
   funFacts: text("fun_facts"),
   howToPlay: text("how_to_play"),
-  pointsReward: integer("points_reward").default(10),
+  linkedStoryTitle: varchar("linked_story_title", { length: 255 }),
+  pointsReward: integer("points_reward").default(10).notNull(),
+  config: jsonb("config").notNull(),
   backgroundMusicUrl: text("background_music_url"),
-  soundEffectsEnabled: boolean("sound_effects_enabled").default(true),
-  isActive: boolean("is_active").default(true),
-  isFeatured: boolean("is_featured").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const courseworkItems = pgTable("coursework_items", {
-  id: serial("id").primaryKey(),
-  teacherId: uuid("teacher_id").references(() => users.id),
-  title: varchar("title", { length: 255 }).notNull(),
-  description: text("description"),
-  itemType: varchar("item_type", { length: 100 }),
-  subject: varchar("subject", { length: 100 }),
-  fileKey: text("file_key"),
-  linkUrl: text("link_url"),
-  linkedArticleId: integer("linked_article_id"),
-  price: integer("price").default(0),
-  salesCount: integer("sales_count").default(0),
-  isPublished: boolean("is_published").default(false),
-  thumbnailUrl: text("thumbnail_url"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const userDailyActivity = pgTable("user_daily_activity", {
-  id: serial("id").primaryKey(),
-  userId: uuid("user_id").references(() => users.id).notNull(),
-  activityDate: date("activity_date").notNull(),
-  readingSeconds: integer("reading_seconds").default(0),
-  watchingSeconds: integer("watching_seconds").default(0),
-  playSeconds: integer("play_seconds").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  soundEffectsEnabled: boolean("sound_effects_enabled").default(true).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  isFeatured: boolean("is_featured").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => [
-  uniqueIndex("user_date_unique_idx").on(table.userId, table.activityDate),
+  index("idx_story_games_linked_title").on(table.linkedStoryTitle),
+  index("idx_story_games_game_type").on(table.gameType),
 ]);
 
-export const userPointsLedger = pgTable("user_points_ledger", {
-  id: serial("id").primaryKey(),
-  userId: uuid("user_id").references(() => users.id).notNull(),
-  pointsDelta: integer("points_delta").notNull(),
-  sourceType: varchar("source_type", { length: 50 }).notNull(),
-  sourceId: integer("source_id"),
-  balanceAfter: integer("balance_after").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export const userGameCompletions = pgTable("user_game_completions", {
-  id: serial("id").primaryKey(),
-  userId: uuid("user_id").references(() => users.id).notNull(),
-  gameId: integer("game_id").references(() => storyGames.id).notNull(),
-  score: integer("score").notNull(),
-  pointsAwarded: integer("points_awarded").notNull(),
-  completedAt: timestamp("completed_at").defaultNow(),
-});
-
-export const insertUserSchema = createInsertSchema(users);
-export const insertVideoSchema = createInsertSchema(videos);
-export const updateVideoSchema = insertVideoSchema.partial();
-export const insertSubscriptionSchema = createInsertSchema(subscriptions);
-export const insertStoryGameSchema = createInsertSchema(storyGames);
-export const updateStoryGameSchema = insertStoryGameSchema.partial();
-export const insertCourseworkItemSchema = createInsertSchema(courseworkItems);
-export const updateCourseworkItemSchema = insertCourseworkItemSchema.partial();
-export const insertUserDailyActivitySchema = createInsertSchema(userDailyActivity);
-export const insertUserPointsLedgerSchema = createInsertSchema(userPointsLedger);
-export const insertUserGameCompletionsSchema = createInsertSchema(userGameCompletions);
-
-// Stories table (for news articles/stories)
-export const stories = pgTable("stories", {
-  id: serial("id").primaryKey(),
-  slug: varchar("slug", { length: 255 }).unique(),
-  title: varchar("title", { length: 255 }).notNull(),
-  summary: text("summary"),
-  content: text("content"),
-  category: varchar("category", { length: 100 }),
-  thumbnailUrl: text("thumbnail_url"),
-  readingLevel: varchar("reading_level", { length: 50 }),
-  readingTimeMinutes: integer("reading_time_minutes"),
-  authorId: uuid("author_id"),
-  isFeatured: boolean("is_featured").default(false),
-  isPublished: boolean("is_published").default(false),
-  publishedAt: timestamp("published_at"),
-  viewCount: integer("view_count").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const insertStorySchema = createInsertSchema(stories);
-export const updateStorySchema = insertStorySchema.partial();
-
-// R2 Video Metadata
-export const r2VideoMetadata = pgTable("r2_video_metadata", {
-  id: serial("id").primaryKey(),
-  r2Key: varchar("r2_key", { length: 500 }).unique().notNull(),
-  title: varchar("title", { length: 255 }),
-  description: text("description"),
-  category: varchar("category", { length: 100 }),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Type exports
-export type InsertVideo = typeof videos.$inferInsert;
-export type InsertStory = typeof stories.$inferInsert;
 export type InsertStoryGame = typeof storyGames.$inferInsert;
-export type InsertCourseworkItem = typeof courseworkItems.$inferInsert;
-export type InsertSubscription = typeof subscriptions.$inferInsert;
-export type InsertR2VideoMetadata = typeof r2VideoMetadata.$inferInsert;
-export type UpsertUser = typeof users.$inferInsert;
-export type User = typeof users.$inferSelect;
-export type Video = typeof videos.$inferSelect;
-export type Story = typeof stories.$inferSelect;
 export type StoryGame = typeof storyGames.$inferSelect;
+
+export const insertStoryGameSchema = createInsertSchema(storyGames).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updateStoryGameSchema = createInsertSchema(storyGames).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).partial();
+
+// Type definitions for game configs
+export interface PuzzleGameConfig {
+  imageUrl: string;
+  gridSize: number; // 3x3, 4x4, etc.
+  hintText?: string;
+  winMessage?: string;
+}
+
+export interface MatchGameConfig {
+  pairs: Array<{
+    id: string;
+    front: string; // text or image URL
+    back: string; // matching text or image URL
+  }>;
+  winMessage?: string;
+}
+
+export interface QuizGameConfig {
+  questions: Array<{
+    id: string;
+    question: string;
+    options: string[];
+    correctIndex: number;
+    explanation?: string;
+  }>;
+  passingScore?: number;
+  winMessage?: string;
+}
+
+export interface WhackGameConfig {
+  targetImage: string;
+  targetLabel: string;
+  distractorImages: string[];
+  distractorLabels: string[];
+  backgroundImage?: string;
+  duration: number; // seconds
+  winMessage?: string;
+}
+
+export interface TimelineGameConfig {
+  events: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    image?: string;
+    order: number;
+  }>;
+  winMessage?: string;
+}
+
+// Teacher Coursework Marketplace
+export const courseworkItems = pgTable("coursework_items", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  teacherId: varchar("teacher_id").references(() => users.id).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  itemType: varchar("item_type", { length: 50 }).notNull(), // pdf_worksheet, unit_plan, lesson_bundle, homework_pack, reading_comprehension, project_assignment, video, quiz
+  subject: varchar("subject", { length: 100 }),
+  fileKey: varchar("file_key"), // R2 file key for uploaded files
+  linkUrl: text("link_url"), // External link (YouTube, etc.)
+  linkedArticleId: integer("linked_article_id").references(() => stories.id),
+  price: integer("price").default(0).notNull(), // in cents
+  salesCount: integer("sales_count").default(0).notNull(),
+  isPublished: boolean("is_published").default(false).notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => [
+  index("idx_coursework_teacher").on(table.teacherId),
+  index("idx_coursework_type").on(table.itemType),
+  index("idx_coursework_subject").on(table.subject),
+]);
+
+export const courseworkItemsRelations = relations(courseworkItems, ({ one }) => ({
+  teacher: one(users, {
+    fields: [courseworkItems.teacherId],
+    references: [users.id],
+  }),
+  linkedArticle: one(stories, {
+    fields: [courseworkItems.linkedArticleId],
+    references: [stories.id],
+  }),
+}));
+
+export type InsertCourseworkItem = typeof courseworkItems.$inferInsert;
 export type CourseworkItem = typeof courseworkItems.$inferSelect;
-export type Subscription = typeof subscriptions.$inferSelect;
-export type UserDailyActivity = typeof userDailyActivity.$inferSelect;
-export type UserActivity = UserDailyActivity; // Alias
-export type UserPointsLedger = typeof userPointsLedger.$inferSelect;
-export type UserGameCompletion = typeof userGameCompletions.$inferSelect;
-export type R2VideoMetadata = typeof r2VideoMetadata.$inferSelect;
 
-// Alias for userDailyActivity for backward compatibility  
-export const userActivity = userDailyActivity;
+export const insertCourseworkItemSchema = createInsertSchema(courseworkItems).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  salesCount: true,
+});
 
-// Constants for coursework types
+export const updateCourseworkItemSchema = createInsertSchema(courseworkItems).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  teacherId: true,
+  salesCount: true,
+}).partial();
+
+// Coursework item types
 export const COURSEWORK_TYPES = [
-  "PDF",
-  "Unit Plan",
-  "Worksheet",
-  "Assessment",
-  "Presentation",
-  "Video",
-  "Quiz",
-  "Activity",
-  "Lesson Plan",
-  "Resource Pack",
+  { id: 'pdf_worksheet', label: 'PDF Worksheet' },
+  { id: 'unit_plan', label: 'Unit Plan' },
+  { id: 'lesson_bundle', label: 'Weekly Lesson Bundle' },
+  { id: 'homework_pack', label: 'Homework Pack' },
+  { id: 'reading_comprehension', label: 'Reading Comprehension Set' },
+  { id: 'project_assignment', label: 'Project-Based Learning Assignment' },
+  { id: 'video', label: 'Educational Video' },
+  { id: 'quiz', label: 'Quiz (tied to NewsPals article)' },
 ] as const;
 
-// Constants for subjects
 export const SUBJECTS = [
-  "Mathematics",
-  "Science",
-  "English",
-  "History",
-  "Geography",
-  "Art",
-  "Music",
-  "Physical Education",
-  "Technology",
-  "Languages",
-  "Social Studies",
-  "Health",
+  'Math',
+  'Science',
+  'English',
+  'History',
+  'Geography',
+  'Art',
+  'Music',
+  'Physical Education',
+  'Social Studies',
+  'Technology',
+  'Foreign Language',
+  'Other',
 ] as const;

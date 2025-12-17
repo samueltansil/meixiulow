@@ -437,22 +437,12 @@ export default function AdminVideos() {
     }
   };
 
-  if (!isAuthenticated) {
-    return <AdminLoginDialog onSuccess={() => setIsAuthenticated(true)} />;
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="bg-red-50 text-red-600 p-6 rounded-2xl max-w-md text-center">
-          <p className="font-heading font-bold mb-2">Access Denied</p>
-          <p className="text-sm">You need admin access to view this page.</p>
-          <Link href="/">
-            <Button variant="link" className="mt-4">Return to Home</Button>
-          </Link>
-        </div>
-      </div>
-    );
+  if (!isAuthenticated || error) {
+    return <AdminLoginDialog onSuccess={() => {
+      clearStoredToken();
+      queryClient.clear();
+      setIsAuthenticated(true);
+    }} />;
   }
 
   return (
