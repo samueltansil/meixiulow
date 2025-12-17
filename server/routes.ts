@@ -4,7 +4,20 @@ import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertVideoSchema, updateVideoSchema, insertStorySchema, updateStorySchema, insertStoryGameSchema, updateStoryGameSchema, insertCourseworkItemSchema, updateCourseworkItemSchema, type InsertVideo, type InsertStory, type InsertStoryGame, type InsertCourseworkItem } from "@shared/schema";
+import { 
+  insertVideoSchema, 
+  updateVideoSchema, 
+  insertStorySchema, 
+  updateStorySchema, 
+  insertStoryGameSchema, 
+  updateStoryGameSchema, 
+  insertCourseworkItemSchema, 
+  updateCourseworkItemSchema,
+  type InsertVideo, 
+  type InsertStory, 
+  type InsertStoryGame, 
+  type InsertCourseworkItem 
+} from "@shared/schema";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { listVideos, getVideoSignedUrl, getImageUploadUrl, getImageSignedUrl, uploadImageToR2 } from "./r2";

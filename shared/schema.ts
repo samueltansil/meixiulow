@@ -17,6 +17,7 @@ export const users = pgTable("users", {
   reputationScore: integer("reputation_score").default(0),
   totalSales: integer("total_sales").default(0),
   totalPoints: integer("total_points").default(0),
+  points: integer("points").default(0),
   badges: jsonb("badges"),
   emailVerified: boolean("email_verified").default(false),
   emailVerificationToken: varchar("email_verification_token", { length: 255 }),
@@ -26,6 +27,7 @@ export const users = pgTable("users", {
   marketingEmailsOptIn: boolean("marketing_emails_opt_in").default(false),
   contentAlertsOptIn: boolean("content_alerts_opt_in").default(true),
   teacherUpdatesOptIn: boolean("teacher_updates_opt_in").default(false),
+  teacherVerificationStatus: varchar("teacher_verification_status", { length: 50 }),
   passwordHash: varchar("password_hash", { length: 255 }),
   firstName: varchar("first_name", { length: 100 }),
   lastName: varchar("last_name", { length: 100 }),
@@ -136,9 +138,53 @@ export const userGameCompletions = pgTable("user_game_completions", {
 
 export const insertUserSchema = createInsertSchema(users);
 export const insertVideoSchema = createInsertSchema(videos);
+export const updateVideoSchema = insertVideoSchema.partial();
 export const insertSubscriptionSchema = createInsertSchema(subscriptions);
 export const insertStoryGameSchema = createInsertSchema(storyGames);
+export const updateStoryGameSchema = insertStoryGameSchema.partial();
 export const insertCourseworkItemSchema = createInsertSchema(courseworkItems);
+export const updateCourseworkItemSchema = insertCourseworkItemSchema.partial();
 export const insertUserDailyActivitySchema = createInsertSchema(userDailyActivity);
 export const insertUserPointsLedgerSchema = createInsertSchema(userPointsLedger);
 export const insertUserGameCompletionsSchema = createInsertSchema(userGameCompletions);
+
+// Stories table (for news articles/stories)
+export const stories = pgTable("stories", {
+  id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 255 }).unique(),
+  title: varchar("title", { length: 255 }).notNull(),
+  summary: text("summary"),
+  content: text("content"),
+  category: varchar("category", { length: 100 }),
+  thumbnailUrl: text("thumbnail_url"),
+  readingLevel: varchar("reading_level", { length: 50 }),
+  readingTimeMinutes: integer("reading_time_minutes"),
+  authorId: uuid("author_id"),
+  isFeatured: boolean("is_featured").default(false),
+  isPublished: boolean("is_published").default(false),
+  publishedAt: timestamp("published_at"),
+  viewCount: integer("view_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertStorySchema = createInsertSchema(stories);
+export const updateStorySchema = insertStorySchema.partial();
+
+// R2 Video Metadata
+export const r2VideoMetadata = pgTable("r2_video_metadata", {
+  id: serial("id").primaryKey(),
+  r2Key: varchar("r2_key", { length: 500 }).unique().notNull(),
+  title: varchar("title", { length: 255 }),
+  description: text("description"),
+  category: varchar("category", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Type exports
+export type InsertVideo = typeof videos.$inferInsert;
+export type InsertStory = typeof stories.$inferInsert;
+export type InsertStoryGame = typeof storyGames.$inferInsert;
+export type InsertCourseworkItem = typeof courseworkItems.$inferInsert;
+export type User = typeof users.$inferSelect;
