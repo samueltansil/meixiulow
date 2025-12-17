@@ -569,8 +569,8 @@ export default function AdminStories() {
       <nav className="p-4 border-b border-border/50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 font-heading text-2xl font-bold text-primary hover:opacity-80 transition-opacity">
-            <img src={logo} alt="NewsPals Logo" className="h-10 w-10 object-contain" />
-            NewsPals
+            <img src={logo} alt="WhyPals Logo" className="h-10 w-10 object-contain" />
+            WhyPals
           </Link>
           
           <div className="hidden md:flex items-center gap-8 font-heading font-semibold text-muted-foreground">
@@ -594,7 +594,7 @@ export default function AdminStories() {
                 Story Management
               </h1>
               <p className="text-muted-foreground text-sm">
-                Create, edit, and publish stories for NewsPals
+                Create, edit, and publish stories for WhyPals
               </p>
             </div>
           </div>
@@ -674,7 +674,7 @@ export default function AdminStories() {
       <footer className="bg-white border-t border-border py-8">
         <div className="container mx-auto px-4 text-center">
           <p className="text-xs text-muted-foreground/50">
-            Admin Panel - NewsPals for Kids
+            Admin Panel - WhyPals for Kids
           </p>
         </div>
       </footer>

@@ -177,8 +177,8 @@ export default function Settings() {
       <nav className="p-4 border-b border-border/50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 font-heading text-2xl font-bold text-primary hover:opacity-80 transition-opacity">
-            <img src={logo} alt="NewsPals Logo" className="h-10 w-10 object-contain" />
-            NewsPals
+            <img src={logo} alt="WhyPals Logo" className="h-10 w-10 object-contain" />
+            WhyPals
           </Link>
           
           <div className="hidden md:flex items-center gap-8 font-heading font-semibold text-muted-foreground">
@@ -219,8 +219,8 @@ export default function Settings() {
               <SheetContent side="right" className="w-80">
                 <SheetHeader>
                   <SheetTitle className="flex items-center gap-3 font-heading">
-                    <img src={logo} alt="NewsPals" className="h-10 w-10" />
-                    NewsPals
+                    <img src={logo} alt="WhyPals" className="h-10 w-10" />
+                    WhyPals
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="mt-8 flex flex-col gap-2">
@@ -603,7 +603,7 @@ export default function Settings() {
             <section>
               <h3 className="font-heading font-bold text-lg mb-2">1. Introduction</h3>
               <p className="text-muted-foreground">
-                Welcome to NewsPals! We are committed to protecting the privacy and safety of children who use our platform. 
+                Welcome to WhyPals! We are committed to protecting the privacy and safety of children who use our platform. 
                 This Privacy Policy explains how we collect, use, and protect personal information in compliance with the 
                 Children's Online Privacy Protection Act (COPPA) and other applicable regulations.
               </p>

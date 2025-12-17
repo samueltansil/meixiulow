@@ -84,8 +84,8 @@ export default function CourseworkDetail() {
               </Button>
             </Link>
             <Link href="/" className="flex items-center gap-3 font-heading text-2xl font-bold text-primary">
-              <img src={logo} alt="NewsPals Logo" className="h-10 w-10 object-contain" />
-              NewsPals
+              <img src={logo} alt="WhyPals Logo" className="h-10 w-10 object-contain" />
+              WhyPals
             </Link>
           </div>
         </div>

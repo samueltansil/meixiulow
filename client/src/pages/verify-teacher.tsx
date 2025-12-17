@@ -10,7 +10,7 @@ export default function VerifyTeacher() {
     {
       number: 1,
       title: "Create Your Account",
-      description: "Sign up or log in to NewsPals with your email address.",
+      description: "Sign up or log in to WhyPals with your email address.",
       icon: UserPlus,
       status: "info",
     },
@@ -48,8 +48,8 @@ export default function VerifyTeacher() {
       <nav className="p-4 border-b border-border/50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 font-heading text-2xl font-bold text-primary hover:opacity-80 transition-opacity">
-            <img src={logo} alt="NewsPals Logo" className="h-10 w-10 object-contain" />
-            NewsPals
+            <img src={logo} alt="WhyPals Logo" className="h-10 w-10 object-contain" />
+            WhyPals
           </Link>
         </div>
       </nav>
@@ -141,7 +141,7 @@ export default function VerifyTeacher() {
       <footer className="bg-white border-t border-border py-8 mt-auto">
         <div className="container mx-auto px-4 text-center">
           <p className="text-xs text-muted-foreground/50">
-            © 2024 NewsPals for Kids. All rights reserved.
+            © 2024 WhyPals for Kids. All rights reserved.
           </p>
         </div>
       </footer>

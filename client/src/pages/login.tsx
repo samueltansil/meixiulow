@@ -59,7 +59,7 @@ export default function Login() {
       >
         <div className="text-center mb-8">
           <Link href="/">
-            <img src={logo} alt="NewsPals" className="h-20 w-20 mx-auto mb-4" />
+            <img src={logo} alt="WhyPals" className="h-20 w-20 mx-auto mb-4" />
           </Link>
           <h1 className="font-heading text-3xl font-bold text-primary">Welcome Back!</h1>
           <p className="text-muted-foreground mt-2">Log in to continue learning</p>

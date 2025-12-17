@@ -60,8 +60,8 @@ export default function Leaderboard() {
       <nav className="p-4 border-b border-border/50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 font-heading text-2xl font-bold text-primary hover:opacity-80 transition-opacity">
-            <img src={logo} alt="NewsPals Logo" className="h-10 w-10 object-contain" />
-            NewsPals
+            <img src={logo} alt="WhyPals Logo" className="h-10 w-10 object-contain" />
+            WhyPals
           </Link>
           
           <div className="hidden md:flex items-center gap-8 font-heading font-semibold text-muted-foreground">
@@ -81,8 +81,8 @@ export default function Leaderboard() {
               <SheetContent side="right" className="w-80">
                 <SheetHeader>
                   <SheetTitle className="flex items-center gap-3 font-heading">
-                    <img src={logo} alt="NewsPals" className="h-10 w-10" />
-                    NewsPals
+                    <img src={logo} alt="WhyPals" className="h-10 w-10" />
+                    WhyPals
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="mt-8 flex flex-col gap-2">
@@ -237,7 +237,7 @@ export default function Leaderboard() {
 
       <footer className="bg-white border-t border-border py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          © 2024 NewsPals for Kids. All rights reserved.
+          © 2024 WhyPals for Kids. All rights reserved.
         </div>
       </footer>
     </div>

@@ -15,7 +15,7 @@ export default function Landing() {
         >
           <img 
             src={logo} 
-            alt="NewsPals Logo" 
+            alt="WhyPals Logo" 
             className="h-32 w-32 mx-auto object-contain animate-bounce-slow" 
           />
         </motion.div>
@@ -26,7 +26,7 @@ export default function Landing() {
           transition={{ delay: 0.3 }}
           className="font-heading text-6xl md:text-8xl font-bold text-primary mb-6"
         >
-          Welcome to NewsPals!
+          Welcome to WhyPals!
         </motion.h1>
 
         <motion.p

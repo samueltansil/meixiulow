@@ -354,7 +354,7 @@ export default function TeacherDashboard() {
               </Button>
             </Link>
             <Link href="/" className="flex items-center gap-3 font-heading text-2xl font-bold text-primary">
-              <img src={logo} alt="NewsPals Logo" className="h-10 w-10 object-contain" />
+              <img src={logo} alt="WhyPals Logo" className="h-10 w-10 object-contain" />
               Teacher Dashboard
             </Link>
           </div>
@@ -474,7 +474,7 @@ export default function TeacherDashboard() {
                       Become a Verified Teacher
                     </DialogTitle>
                     <DialogDescription className="pt-4 text-base">
-                      Verification allows you to sell educational materials on NewsPals and earn money from your content.
+                      Verification allows you to sell educational materials on WhyPals and earn money from your content.
                     </DialogDescription>
                   </DialogHeader>
                   

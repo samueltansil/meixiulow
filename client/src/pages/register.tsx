@@ -67,7 +67,7 @@ export default function Register() {
       if (result.success) {
         toast({
           title: "Account created!",
-          description: "Welcome to NewsPals! Now let's set up your account.",
+          description: "Welcome to WhyPals! Now let's set up your account.",
         });
         navigate("/select-role");
       }
@@ -90,9 +90,9 @@ export default function Register() {
       >
         <div className="text-center mb-8">
           <Link href="/">
-            <img src={logo} alt="NewsPals" className="h-20 w-20 mx-auto mb-4" />
+            <img src={logo} alt="WhyPals" className="h-20 w-20 mx-auto mb-4" />
           </Link>
-          <h1 className="font-heading text-3xl font-bold text-primary">Join NewsPals!</h1>
+          <h1 className="font-heading text-3xl font-bold text-primary">Join WhyPals!</h1>
           <p className="text-muted-foreground mt-2">Create your account to start learning</p>
         </div>
 
@@ -222,7 +222,7 @@ export default function Register() {
                     </button>
                   </Label>
                   <p className="text-xs text-muted-foreground mt-1">
-                    NewsPals is a safe platform designed for children
+                    WhyPals is a safe platform designed for children
                   </p>
                 </div>
               </div>
@@ -267,7 +267,7 @@ export default function Register() {
             <section>
               <h3 className="font-heading font-bold text-lg mb-2">Terms of Service</h3>
               <p className="text-muted-foreground mb-3">
-                By creating an account on NewsPals, you agree to the following terms:
+                By creating an account on WhyPals, you agree to the following terms:
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
                 <li>You will use the platform for educational purposes only</li>
@@ -281,7 +281,7 @@ export default function Register() {
             <section>
               <h3 className="font-heading font-bold text-lg mb-2">Privacy Policy</h3>
               <p className="text-muted-foreground mb-3">
-                NewsPals is committed to protecting children's privacy:
+                WhyPals is committed to protecting children's privacy:
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
                 <li>We collect minimal personal information (name, email)</li>

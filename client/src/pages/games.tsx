@@ -94,8 +94,8 @@ export default function Games() {
       <nav className="p-4 border-b border-border/50 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 font-heading text-2xl font-bold text-primary hover:opacity-80 transition-opacity">
-            <img src={logo} alt="NewsPals Logo" className="h-10 w-10 object-contain" />
-            NewsPals
+            <img src={logo} alt="WhyPals Logo" className="h-10 w-10 object-contain" />
+            WhyPals
           </Link>
           
           <div className="hidden md:flex items-center gap-8 font-heading font-semibold text-muted-foreground">
@@ -143,8 +143,8 @@ export default function Games() {
               <SheetContent side="right" className="w-80">
                 <SheetHeader>
                   <SheetTitle className="flex items-center gap-3 font-heading">
-                    <img src={logo} alt="NewsPals" className="h-10 w-10" />
-                    NewsPals
+                    <img src={logo} alt="WhyPals" className="h-10 w-10" />
+                    WhyPals
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="mt-8 flex flex-col gap-2">
@@ -340,15 +340,15 @@ export default function Games() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="NewsPals Logo" className="h-10 w-10 object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all" />
-              <span className="font-heading text-xl font-bold text-muted-foreground">NewsPals</span>
+              <img src={logo} alt="WhyPals Logo" className="h-10 w-10 object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all" />
+              <span className="font-heading text-xl font-bold text-muted-foreground">WhyPals</span>
             </div>
             <div className="flex gap-8 text-sm font-semibold text-muted-foreground">
               <a href="#" className="hover:text-primary transition-colors">About Us</a>
               <a href="#" className="hover:text-primary transition-colors">Contact</a>
             </div>
             <p className="text-xs text-muted-foreground/50">
-              © 2024 NewsPals for Kids. All rights reserved.
+              © 2024 WhyPals for Kids. All rights reserved.
             </p>
           </div>
         </div>
