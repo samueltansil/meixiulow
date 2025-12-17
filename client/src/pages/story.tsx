@@ -182,10 +182,22 @@ export default function StoryPage() {
     [article?.content]
   );
 
-  const textParagraphsForTTS = useMemo(() => 
-    paragraphs.filter(p => !isImageParagraph(p)).map(p => removeImageTags(p)).filter(p => p.length > 0),
-    [paragraphs]
-  );
+  const { textParagraphsForTTS, paragraphToTTSIndex } = useMemo(() => {
+    const textParagraphs: string[] = [];
+    const indexMap: Map<number, number> = new Map();
+    
+    paragraphs.forEach((p, i) => {
+      if (!isImageParagraph(p)) {
+        const cleaned = removeImageTags(p);
+        if (cleaned.length > 0) {
+          indexMap.set(i, textParagraphs.length);
+          textParagraphs.push(cleaned);
+        }
+      }
+    });
+    
+    return { textParagraphsForTTS: textParagraphs, paragraphToTTSIndex: indexMap };
+  }, [paragraphs]);
   
   const {
     isPlaying,
@@ -403,35 +415,32 @@ export default function StoryPage() {
           </div>
 
           <div className="prose prose-lg max-w-none" data-testid="story-content">
-            {(() => {
-              let ttsIndex = -1;
-              return paragraphs.map((paragraph, index) => {
-                const imageUrl = getImageUrl(paragraph);
-                if (imageUrl) {
-                  return <InlineImage key={index} url={imageUrl} />;
-                }
-                
-                const cleanedText = removeImageTags(paragraph);
-                if (!cleanedText) return null;
-                
-                ttsIndex++;
-                const isCurrent = currentParagraphIndex === ttsIndex;
-                const isCompleted = currentParagraphIndex > ttsIndex;
-                
-                return (
-                  <HighlightedParagraph
-                    key={index}
-                    text={cleanedText}
-                    isCurrentParagraph={isCurrent}
-                    isCompleted={isCompleted}
-                    isReadingActive={isPlaying}
-                    paragraphRef={isCurrent ? currentParagraphRef : undefined}
-                    words={isCurrent ? currentWords : undefined}
-                    currentWordIndex={isCurrent ? currentWordIndex : undefined}
-                  />
-                );
-              });
-            })()}
+            {paragraphs.map((paragraph, index) => {
+              const imageUrl = getImageUrl(paragraph);
+              if (imageUrl) {
+                return <InlineImage key={index} url={imageUrl} />;
+              }
+              
+              const ttsIndex = paragraphToTTSIndex.get(index);
+              if (ttsIndex === undefined) return null;
+              
+              const cleanedText = textParagraphsForTTS[ttsIndex];
+              const isCurrent = currentParagraphIndex === ttsIndex;
+              const isCompleted = currentParagraphIndex > ttsIndex;
+              
+              return (
+                <HighlightedParagraph
+                  key={index}
+                  text={cleanedText}
+                  isCurrentParagraph={isCurrent}
+                  isCompleted={isCompleted}
+                  isReadingActive={isPlaying}
+                  paragraphRef={isCurrent ? currentParagraphRef : undefined}
+                  words={isCurrent ? currentWords : undefined}
+                  currentWordIndex={isCurrent ? currentWordIndex : undefined}
+                />
+              );
+            })}
           </div>
 
           <div className="mt-12 pt-8 border-t border-border">
