@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "wouter";
 import { Plus, Edit, Trash2, Eye, EyeOff, ArrowLeft, FileText, Video, HelpCircle, BookOpen, Package, Upload, User as UserIcon, Save, ChevronDown, ChevronUp, ShieldCheck, AlertCircle, Clock, CheckCircle2, Loader2 } from "lucide-react";
-import logo from "@assets/generated_images/cute_owl_mascot_for_kids_news_site.png";
+import logo from "@assets/Untitled_design_(8)_1765990113560.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

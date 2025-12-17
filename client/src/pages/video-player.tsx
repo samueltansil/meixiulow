@@ -3,7 +3,7 @@ import { ArrowLeft, Clock, Eye, Play, Pause, Volume2, VolumeX, Maximize } from "
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import type { Video } from "@shared/schema";
-import logo from "@assets/generated_images/cute_owl_mascot_for_kids_news_site.png";
+import logo from "@assets/Untitled_design_(8)_1765990113560.png";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { useState, useRef } from "react";
 

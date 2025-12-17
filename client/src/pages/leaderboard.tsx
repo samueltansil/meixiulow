@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link, useLocation } from "wouter";
 import { ArrowLeft, Trophy, Star, TrendingUp, Users, Crown, Medal, Award, FileText, Video, HelpCircle, Package, Home, Play, Gamepad2, GraduationCap, Menu, Settings } from "lucide-react";
-import logo from "@assets/generated_images/cute_owl_mascot_for_kids_news_site.png";
+import logo from "@assets/Untitled_design_(8)_1765990113560.png";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";

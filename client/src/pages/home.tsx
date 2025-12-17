@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Menu, ChevronLeft, ChevronRight, X, Home as HomeIcon, Play, Gamepad2, GraduationCap, Settings, Star } from "lucide-react";
-import logo from "@assets/generated_images/cute_owl_mascot_for_kids_news_site.png";
+import logo from "@assets/Untitled_design_(8)_1765990113560.png";
 import { CATEGORIES } from "@/lib/data";
 import { NewsCard } from "@/components/news-card";
 import { Button } from "@/components/ui/button";

@@ -1,7 +1,7 @@
 import { Link, useParams, useLocation } from "wouter";
 import { ArrowLeft, Play, Trophy, Clock, Users, Gamepad2, CheckCircle, Star, Puzzle, Target, Sparkles, HelpCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@assets/generated_images/cute_owl_mascot_for_kids_news_site.png";
+import logo from "@assets/Untitled_design_(8)_1765990113560.png";
 import { motion } from "framer-motion";
 import { usePoints } from "@/hooks/usePoints";
 import { useState } from "react";
