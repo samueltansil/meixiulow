@@ -141,8 +141,8 @@ npm run build
 ### Step 3: Start with PM2
 
 ```bash
-# Start the application
-pm2 start npm --name "whypals" -- run start
+# Start the application (pure Node.js, no Vite dependencies)
+pm2 start server/dist/index.cjs --name "whypals"
 
 # Save PM2 configuration
 pm2 save
@@ -150,6 +150,8 @@ pm2 save
 # Setup PM2 to start on boot
 pm2 startup
 ```
+
+> **Note:** The production bundle `server/dist/index.cjs` is pure Node.js code with no Vite dependencies. It can be run directly with `node` or `pm2`.
 
 ### Step 4: Setup Nginx Reverse Proxy
 
@@ -219,6 +221,18 @@ git pull
 npm install
 npm run build
 pm2 restart whypals
+```
+
+## Direct Server Execution
+
+If you prefer not to use PM2, you can run the server directly:
+
+```bash
+# Using npm script
+NODE_ENV=production npm run start
+
+# Or run the bundle directly
+NODE_ENV=production node server/dist/index.cjs
 ```
 
 ## Project Structure
