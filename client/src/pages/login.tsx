@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function Login() {

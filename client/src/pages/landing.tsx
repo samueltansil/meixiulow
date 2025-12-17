@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 

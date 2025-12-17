@@ -2,7 +2,7 @@ import { Link, useParams } from "wouter";
 import { ArrowLeft, Clock, Calendar, Play, Pause, Square, Volume2, Loader2, Gamepad2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/lib/data";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { useElevenLabsTTS } from "@/hooks/useElevenLabsTTS";
 import { useMemo, useEffect, useRef } from "react";

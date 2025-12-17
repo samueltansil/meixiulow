@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { Play, Clock, Search, Menu, Video, FileVideo } from "lucide-react";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { useR2Videos, useR2VideoUrl } from "@/hooks/useR2Videos";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";

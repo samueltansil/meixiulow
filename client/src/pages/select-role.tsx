@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { GraduationCap, BookOpen, Loader2, CheckCircle2 } from "lucide-react";
 import { useEffect } from "react";
 

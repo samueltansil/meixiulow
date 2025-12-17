@@ -1,7 +1,7 @@
 import { Link, useParams } from "wouter";
 import { ArrowLeft, Clock, Cloud, Play, Pause, Volume2, VolumeX, Maximize, FlaskConical, Leaf, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { useState, useRef, useEffect } from "react";
 import { useR2VideoUrl, useR2VideoMetadataByKey } from "@/hooks/useR2Videos";

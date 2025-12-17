@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "wouter";
 import { Play, Clock, Search, Menu, FlaskConical, Leaf, Sparkles, Cloud, Pencil, X, Home, Gamepad2, GraduationCap, Settings, Star } from "lucide-react";
 import { FeaturedVideoSlideshow } from "@/components/featured-video-slideshow";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { useQuery } from "@tanstack/react-query";
 import type { Video } from "@shared/schema";
 import { useState, useEffect, useRef } from "react";

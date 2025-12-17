@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "wouter";
 import { Search, Trophy, Menu, X, Home, Play, Gamepad2, GraduationCap, Settings, Puzzle, Sparkles, Target, HelpCircle, Calendar } from "lucide-react";
 import gamesHero from "@assets/generated_images/kids_games_hero_illustration.png";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { Button } from "@/components/ui/button";
 import { ActivityTracker } from "@/components/activity-tracker";
 import { useActivityTracker } from "@/hooks/useActivityTracker";

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, User, Star, Award, ShoppingBag, FileText, Video, HelpCircle, Package, TrendingUp } from "lucide-react";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { COURSEWORK_TYPES, type CourseworkItem, type User as UserType } from "@shared/schema";

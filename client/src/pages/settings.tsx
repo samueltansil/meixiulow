@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "wouter";
 import { Search, LogOut, User, Bell, Shield, CreditCard, Menu, X, Home, Play, Gamepad2, GraduationCap, Settings as SettingsIcon, BookOpen, Users, AlertTriangle, Lock, Eye, EyeOff, ChevronRight, Check, Loader2 } from "lucide-react";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

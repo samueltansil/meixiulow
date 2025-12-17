@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link, useParams } from "wouter";
 import { ArrowLeft, FileText, Video, HelpCircle, Package, ShoppingCart, User, Star, Download, ExternalLink } from "lucide-react";
-import logo from "@assets/Untitled_design_(8)_1765990113560.png";
+import logo from "@assets/whypals-logo.png";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
