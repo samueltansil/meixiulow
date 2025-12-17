@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { Plus, Edit, Trash2, ArrowLeft, Save, X, Eye, EyeOff, Search, Filter, Gamepad2, Lock } from "lucide-react";
+import { Plus, Edit, Trash2, ArrowLeft, Save, X, Eye, EyeOff, Search, Filter, Gamepad2, Lock, Upload, Loader2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -132,20 +132,112 @@ function AdminLoginDialog({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
+function ImageUploadField({ 
+  label, 
+  value, 
+  onChange, 
+  placeholder = "https://...",
+  showPreview = true 
+}: { 
+  label: string; 
+  value: string; 
+  onChange: (url: string) => void; 
+  placeholder?: string;
+  showPreview?: boolean;
+}) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image must be smaller than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const token = getStoredToken();
+
+      const uploadRes = await fetch('/api/admin/upload/game-image', {
+        method: 'POST',
+        headers: token ? { 'x-admin-token': token } : {},
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const { imageUrl } = await uploadRes.json();
+      onChange(imageUrl);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert("Failed to upload image");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="flex gap-2">
+        <Input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className="flex-1"
+        />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+        >
+          {isUploading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Upload className="w-4 h-4" />
+          )}
+        </Button>
+      </div>
+      {showPreview && value && (
+        <img src={value} alt="Preview" className="w-32 h-32 object-cover rounded-lg" />
+      )}
+    </div>
+  );
+}
+
 function PuzzleConfigEditor({ config, onChange }: { config: PuzzleGameConfig; onChange: (config: PuzzleGameConfig) => void }) {
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Label>Puzzle Image URL</Label>
-        <Input
-          value={config.imageUrl || ""}
-          onChange={(e) => onChange({ ...config, imageUrl: e.target.value })}
-          placeholder="https://example.com/image.jpg"
-        />
-        {config.imageUrl && (
-          <img src={config.imageUrl} alt="Preview" className="w-32 h-32 object-cover rounded-lg" />
-        )}
-      </div>
+      <ImageUploadField
+        label="Puzzle Image"
+        value={config.imageUrl || ""}
+        onChange={(url) => onChange({ ...config, imageUrl: url })}
+        placeholder="https://example.com/image.jpg"
+      />
       <div className="space-y-2">
         <Label>Grid Size</Label>
         <Select value={String(config.gridSize || 3)} onValueChange={(v) => onChange({ ...config, gridSize: parseInt(v) })}>
@@ -179,18 +271,125 @@ function PuzzleConfigEditor({ config, onChange }: { config: PuzzleGameConfig; on
   );
 }
 
+function MultiImageUploadField({ 
+  label, 
+  values, 
+  onChange 
+}: { 
+  label: string; 
+  values: string[]; 
+  onChange: (urls: string[]) => void; 
+}) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image must be smaller than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const token = getStoredToken();
+
+      const uploadRes = await fetch('/api/admin/upload/game-image', {
+        method: 'POST',
+        headers: token ? { 'x-admin-token': token } : {},
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const { imageUrl } = await uploadRes.json();
+      onChange([...values, imageUrl]);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert("Failed to upload image");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <Label>{label}</Label>
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+          >
+            {isUploading ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-1" />
+            ) : (
+              <Upload className="w-4 h-4 mr-1" />
+            )}
+            Upload Image
+          </Button>
+        </div>
+      </div>
+      <Textarea
+        value={values.join("\n")}
+        onChange={(e) => onChange(e.target.value.split("\n").filter(Boolean))}
+        placeholder="https://example.com/image1.png&#10;https://example.com/image2.png"
+        rows={3}
+      />
+      {values.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {values.map((url, idx) => (
+            <div key={idx} className="relative">
+              <img src={url} alt={`Image ${idx + 1}`} className="w-16 h-16 object-cover rounded" />
+              <button
+                type="button"
+                className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs"
+                onClick={() => onChange(values.filter((_, i) => i !== idx))}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function WhackConfigEditor({ config, onChange }: { config: WhackGameConfig; onChange: (config: WhackGameConfig) => void }) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Target Image URL</Label>
-          <Input
-            value={config.targetImage || ""}
-            onChange={(e) => onChange({ ...config, targetImage: e.target.value })}
-            placeholder="https://example.com/target.png"
-          />
-        </div>
+        <ImageUploadField
+          label="Target Image"
+          value={config.targetImage || ""}
+          onChange={(url) => onChange({ ...config, targetImage: url })}
+          placeholder="https://example.com/target.png"
+        />
         <div className="space-y-2">
           <Label>Target Label</Label>
           <Input
@@ -200,15 +399,11 @@ function WhackConfigEditor({ config, onChange }: { config: WhackGameConfig; onCh
           />
         </div>
       </div>
-      <div className="space-y-2">
-        <Label>Distractor Images (one URL per line)</Label>
-        <Textarea
-          value={(config.distractorImages || []).join("\n")}
-          onChange={(e) => onChange({ ...config, distractorImages: e.target.value.split("\n").filter(Boolean) })}
-          placeholder="https://example.com/wrong1.png&#10;https://example.com/wrong2.png"
-          rows={3}
-        />
-      </div>
+      <MultiImageUploadField
+        label="Distractor Images"
+        values={config.distractorImages || []}
+        onChange={(urls) => onChange({ ...config, distractorImages: urls })}
+      />
       <div className="space-y-2">
         <Label>Distractor Labels (one per line)</Label>
         <Textarea
@@ -227,16 +422,88 @@ function WhackConfigEditor({ config, onChange }: { config: WhackGameConfig; onCh
             onChange={(e) => onChange({ ...config, duration: parseInt(e.target.value) })}
           />
         </div>
-        <div className="space-y-2">
-          <Label>Background Image (optional)</Label>
-          <Input
-            value={config.backgroundImage || ""}
-            onChange={(e) => onChange({ ...config, backgroundImage: e.target.value })}
-            placeholder="https://..."
-          />
-        </div>
+        <ImageUploadField
+          label="Background Image (optional)"
+          value={config.backgroundImage || ""}
+          onChange={(url) => onChange({ ...config, backgroundImage: url })}
+          showPreview={false}
+        />
       </div>
     </div>
+  );
+}
+
+function InlineImageUploadButton({ onUpload }: { onUpload: (url: string) => void }) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image must be smaller than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const token = getStoredToken();
+
+      const uploadRes = await fetch('/api/admin/upload/game-image', {
+        method: 'POST',
+        headers: token ? { 'x-admin-token': token } : {},
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const { imageUrl } = await uploadRes.json();
+      onUpload(imageUrl);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert("Failed to upload image");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  return (
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        onClick={() => fileInputRef.current?.click()}
+        disabled={isUploading}
+        className="shrink-0"
+      >
+        {isUploading ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          <Upload className="w-4 h-4" />
+        )}
+      </Button>
+    </>
   );
 }
 
@@ -272,19 +539,25 @@ function MatchConfigEditor({ config, onChange }: { config: MatchGameConfig; onCh
         {pairs.map((pair, index) => (
           <div key={pair.id} className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
             <span className="text-sm font-medium w-8">{index + 1}.</span>
-            <Input
-              value={pair.front}
-              onChange={(e) => updatePair(index, 'front', e.target.value)}
-              placeholder="Front (text or URL)"
-              className="flex-1"
-            />
+            <div className="flex gap-1 flex-1">
+              <Input
+                value={pair.front}
+                onChange={(e) => updatePair(index, 'front', e.target.value)}
+                placeholder="Front (text or URL)"
+                className="flex-1"
+              />
+              <InlineImageUploadButton onUpload={(url) => updatePair(index, 'front', url)} />
+            </div>
             <span className="text-muted-foreground">↔</span>
-            <Input
-              value={pair.back}
-              onChange={(e) => updatePair(index, 'back', e.target.value)}
-              placeholder="Back (text or URL)"
-              className="flex-1"
-            />
+            <div className="flex gap-1 flex-1">
+              <Input
+                value={pair.back}
+                onChange={(e) => updatePair(index, 'back', e.target.value)}
+                placeholder="Back (text or URL)"
+                className="flex-1"
+              />
+              <InlineImageUploadButton onUpload={(url) => updatePair(index, 'back', url)} />
+            </div>
             <Button type="button" variant="ghost" size="sm" onClick={() => removePair(index)}>
               <X className="w-4 h-4" />
             </Button>
@@ -427,11 +700,15 @@ function TimelineConfigEditor({ config, onChange }: { config: TimelineGameConfig
               onChange={(e) => updateEvent(index, 'description', e.target.value)}
               placeholder="Description (optional)"
             />
-            <Input
-              value={event.image || ""}
-              onChange={(e) => updateEvent(index, 'image', e.target.value)}
-              placeholder="Image URL (optional)"
-            />
+            <div className="flex gap-1">
+              <Input
+                value={event.image || ""}
+                onChange={(e) => updateEvent(index, 'image', e.target.value)}
+                placeholder="Image URL (optional)"
+                className="flex-1"
+              />
+              <InlineImageUploadButton onUpload={(url) => updateEvent(index, 'image', url)} />
+            </div>
           </div>
         ))}
       </div>
@@ -563,14 +840,12 @@ function GameForm({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Thumbnail URL</Label>
-              <Input
-                value={thumbnail}
-                onChange={(e) => setThumbnail(e.target.value)}
-                placeholder="https://..."
-              />
-            </div>
+            <ImageUploadField
+              label="Thumbnail"
+              value={thumbnail}
+              onChange={setThumbnail}
+              placeholder="https://..."
+            />
             <div className="space-y-2">
               <Label>Points Reward</Label>
               <Input
