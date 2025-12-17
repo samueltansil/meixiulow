@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./auth";
 import { 
   insertVideoSchema, 
   updateVideoSchema, 
@@ -66,15 +66,10 @@ const upload = multer({
   },
 });
 
-// Combined auth check that supports both Replit Auth and email/password auth
+// Get user ID from session (email/password auth)
 function getUserIdFromRequest(req: any): string | null {
-  // Check email/password session first
   if (req.session?.userId) {
     return req.session.userId;
-  }
-  // Then check Replit Auth
-  if (req.user?.claims?.sub) {
-    return req.user.claims.sub;
   }
   return null;
 }
@@ -87,7 +82,7 @@ export async function registerRoutes(
 
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const user = await storage.getUser(userId);
       res.json(user);
     } catch (error) {
@@ -401,7 +396,7 @@ export async function registerRoutes(
         });
       }
 
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const videoData = result.data as z.infer<typeof insertVideoSchema>;
       const video = await storage.createVideo({
         ...videoData,
@@ -416,7 +411,7 @@ export async function registerRoutes(
 
   app.post('/api/subscribe', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const { plan } = req.body;
 
       if (!plan || !['basic', 'premium', 'family'].includes(plan)) {
@@ -442,7 +437,7 @@ export async function registerRoutes(
 
   app.delete('/api/subscribe', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       await storage.cancelSubscription(userId);
       const updatedUser = await storage.updateUserSubscription(userId, false);
       res.json({ user: updatedUser });
@@ -454,7 +449,7 @@ export async function registerRoutes(
 
   app.get('/api/subscription', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const subscription = await storage.getUserSubscription(userId);
       res.json(subscription || null);
     } catch (error) {
@@ -465,7 +460,7 @@ export async function registerRoutes(
 
   app.get('/api/activity/today', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const activity = await storage.getTodayActivity(userId);
       res.json(activity || { readingTimeSeconds: 0, watchingTimeSeconds: 0, playingTimeSeconds: 0 });
     } catch (error) {
@@ -476,7 +471,7 @@ export async function registerRoutes(
 
   app.post('/api/activity/track', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const { activityType, seconds } = req.body;
       
       if (!['reading', 'watching', 'playing'].includes(activityType)) {
@@ -496,7 +491,7 @@ export async function registerRoutes(
 
   app.get('/api/points', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const points = await storage.getUserPoints(userId);
       res.json({ points });
     } catch (error) {
@@ -507,7 +502,7 @@ export async function registerRoutes(
 
   app.post('/api/points/add', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const { points } = req.body;
       
       if (typeof points !== 'number' || points <= 0) {
@@ -975,7 +970,7 @@ export async function registerRoutes(
     try {
       const gameId = parseInt(req.params.id);
       const { score } = req.body;
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
 
       const game = await storage.getGameById(gameId);
       if (!game) {
@@ -1316,7 +1311,7 @@ export async function registerRoutes(
   // Teacher profile update
   app.put('/api/teacher/profile', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const user = await storage.getUser(userId);
       
       if (!user || user.userRole !== 'teacher') {
@@ -1339,7 +1334,7 @@ export async function registerRoutes(
   // Teacher coursework CRUD
   app.get('/api/teacher/coursework', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const user = await storage.getUser(userId);
       
       if (!user || user.userRole !== 'teacher') {
@@ -1356,7 +1351,7 @@ export async function registerRoutes(
 
   app.post('/api/teacher/coursework', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const user = await storage.getUser(userId);
       
       if (!user || user.userRole !== 'teacher') {
@@ -1378,7 +1373,7 @@ export async function registerRoutes(
 
   app.put('/api/teacher/coursework/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const user = await storage.getUser(userId);
       const id = parseInt(req.params.id);
       
@@ -1406,7 +1401,7 @@ export async function registerRoutes(
 
   app.delete('/api/teacher/coursework/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.session.userId;
       const user = await storage.getUser(userId);
       const id = parseInt(req.params.id);
       

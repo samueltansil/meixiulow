@@ -12,20 +12,13 @@ interface AuthResponse {
 export function useAuth() {
   const queryClient = useQueryClient();
   
-  const { data: replitUser, isLoading: replitLoading } = useQuery<User | null>({
-    queryKey: ["/api/auth/user"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
-    retry: false,
-  });
-
-  const { data: emailUser, isLoading: emailLoading } = useQuery<User | null>({
+  const { data: user, isLoading } = useQuery<User | null>({
     queryKey: ["/api/auth/me"],
     queryFn: getQueryFn({ on401: "returnNull" }),
     retry: false,
   });
 
-  const currentUser = replitUser || emailUser || null;
-  const isLoading = replitLoading || emailLoading;
+  const currentUser = user || null;
 
   const registerMutation = useMutation({
     mutationFn: async (data: { email: string; password: string; confirmPassword: string; firstName?: string; lastName?: string; agreedToTerms?: boolean }) => {
@@ -34,7 +27,6 @@ export function useAuth() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"], exact: true });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"], exact: true });
     },
   });
 
@@ -45,7 +37,6 @@ export function useAuth() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"], exact: true });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"], exact: true });
     },
   });
 
@@ -56,9 +47,7 @@ export function useAuth() {
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/auth/me"], null);
-      queryClient.setQueryData(["/api/auth/user"], null);
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"], exact: true });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"], exact: true });
     },
   });
 
@@ -69,7 +58,6 @@ export function useAuth() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"], exact: true });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"], exact: true });
     },
   });
 
@@ -80,7 +68,6 @@ export function useAuth() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"], exact: true });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"], exact: true });
     },
   });
 
