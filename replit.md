@@ -71,9 +71,34 @@ Preferred communication style: Simple, everyday language.
   - Global `window.whypalsTracker` object for manual control
 
 ## Recent Changes (December 2025)
+- **Source-Based Rebuild**: Restored fully portable development and build setup
+  - Created frontend entry files: `client/index.html`, `client/src/main.tsx`, `client/src/App.tsx`
+  - New TypeScript backend in `server/` replaces legacy bundled artifact
+  - All npm scripts are now functional and portable
 - Added client-side activity tracking script to fix points display not updating after game completion
-- Created React hooks (`useActivityTracker`, `usePoints`, `useActivity`) for future source code integration
-- Set up new server infrastructure files (db.ts, storage.ts, routes.ts) as reference for enhanced tracking
+- Created React hooks (`useActivityTracker`, `usePoints`, `useActivity`) for source code integration
+- Set up server infrastructure files (db.ts, storage.ts, routes.ts) for enhanced tracking
+
+## Development & Build
+
+### Commands
+- `npm run dev` - Start development (frontend + backend concurrently)
+- `npm run build` - Build both client and server for production
+- `npm run start` - Run production server
+- `npm run db:push` - Push database schema changes
+
+### Architecture
+- **Frontend**: React + Vite, builds to `client/dist/`
+- **Backend**: Express + TypeScript, builds to `server/dist/`
+- **Dev Mode**: Vite serves on port 5000, proxies API to backend on port 3001
+- **Prod Mode**: Express serves static files from `client/dist/` on port 5000
+
+### Environment Variables
+See `.env.example` for all required variables including:
+- Database: `DATABASE_URL`, `NEON_DATABASE_URL`
+- Session: `SESSION_SECRET`
+- Storage: `R2_*` variables
+- APIs: `ELEVENLABS_API_KEY`
 
 ## External Dependencies
 
