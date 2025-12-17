@@ -428,7 +428,7 @@ export default function Settings() {
             <Button 
               variant="outline" 
               className="w-full rounded-xl font-bold text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
-              onClick={() => window.location.href = '/api/logout'}
+              onClick={() => window.location.href = '/api/auth/logout'}
               data-testid="button-logout-settings"
             >
               <LogOut className="w-5 h-5 mr-2" />
