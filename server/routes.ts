@@ -1496,3 +1496,5 @@ export async function registerRoutes(
 
   return httpServer;
 }
+
+export default apiRoutes;
