@@ -269,6 +269,21 @@ export async function registerRoutes(
     }
   });
 
+  app.get('/api/auth/logout', async (req: any, res) => {
+    try {
+      req.session.destroy((err: any) => {
+        if (err) {
+          console.error("Error destroying session:", err);
+        }
+        res.clearCookie('connect.sid');
+        res.redirect('/login');
+      });
+    } catch (error) {
+      console.error("Error logging out:", error);
+      res.redirect('/login');
+    }
+  });
+
   app.patch('/api/auth/role', async (req: any, res) => {
     try {
       const userId = getUserIdFromRequest(req);
