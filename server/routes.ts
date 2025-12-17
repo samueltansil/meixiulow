@@ -1274,7 +1274,7 @@ export async function registerRoutes(
   // User role change (supports both auth methods)
   app.post('/api/user/role', async (req: any, res) => {
     try {
-      // Support both email/password auth (session) and Replit auth (passport)
+      // Support session-based authentication
       const userId = getUserIdFromRequest(req);
       if (!userId) {
         return res.status(401).json({ message: "Not authenticated" });

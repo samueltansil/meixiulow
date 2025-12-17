@@ -123,3 +123,44 @@ This project is fully portable and can run on any standard Node.js environment w
 - Standard email/password authentication with PostgreSQL session storage
 - All environment variables are standard (DATABASE_URL, SESSION_SECRET, etc.)
 - Build scripts work on any platform: `npm run build && npm run start`
+- Uses `dotenv` package to load environment variables from `.env` file
+
+See `DEPLOY.md` for complete deployment instructions.
+
+## Terminology Reference (For AI Agents/Developers)
+
+| Term | Description |
+|------|-------------|
+| `attached_assets/` | Directory for user-uploaded assets and generated images |
+| `replit.md` | Project documentation file (this file) |
+| `client/dist/` | Built frontend static files served by Express in production |
+| `server/dist/` | Built backend JavaScript file (compiled from TypeScript) |
+| `server/vite.ts` | Development-only: Vite middleware for HMR (not used in production) |
+| `connect-pg-simple` | PostgreSQL session store for Express sessions |
+| `drizzle` | TypeScript ORM for database operations |
+| `R2` | Cloudflare's S3-compatible object storage for images/files |
+| `isAuthenticated` | Middleware that checks `req.session.userId` for auth |
+| `getUserIdFromRequest` | Helper function to extract user ID from session |
+
+## File Structure
+
+```
+whypals/
+├── client/                 # Frontend React application
+│   ├── src/               # React source files
+│   ├── dist/              # Built output (production)
+│   └── index.html         # Entry HTML
+├── server/                # Backend Express server
+│   ├── index.ts          # Entry point (loads dotenv)
+│   ├── routes.ts         # All API routes
+│   ├── auth.ts           # Session configuration
+│   ├── db.ts             # Database connection
+│   ├── storage.ts        # Database operations class
+│   ├── r2.ts             # Cloudflare R2 storage
+│   ├── vite.ts           # Dev-only Vite middleware
+│   └── dist/             # Built output
+├── shared/               # Shared TypeScript types
+├── .env.example          # Environment template
+├── DEPLOY.md             # Deployment guide
+└── package.json          # Dependencies and scripts
+```
